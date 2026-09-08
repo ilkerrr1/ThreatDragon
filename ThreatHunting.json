@@ -1,0 +1,97 @@
+{
+  "summary": {
+    "title": "Toegangscontrole Gebouw",
+    "owner": "Security Team",
+    "description": "Threat model voor gebouwtoegangscontrole met badgelezers, controller, HR-sync en remote toegang."
+  },
+  "detail": {
+    "diagrams": [
+      {
+        "title": "Data Flow Diagram - Toegangscontrole",
+        "diagramType": "STRIDE",
+        "cells": [
+          {
+            "type": "tm.Actor",
+            "name": "Gebruiker (Werknemer)",
+            "id": "actor-user"
+          },
+          {
+            "type": "tm.Actor",
+            "name": "Onderhoudsbedrijf (Extern)",
+            "id": "actor-vendor"
+          },
+          {
+            "type": "tm.Actor",
+            "name": "HR Beheerder",
+            "id": "actor-hr"
+          },
+          {
+            "type": "tm.Process",
+            "name": "Deur Controller (Afgesloten Kast)",
+            "id": "proc-controller"
+          },
+          {
+            "type": "tm.Process",
+            "name": "HR Synchronisatie Service",
+            "id": "proc-hr-sync"
+          },
+          {
+            "type": "tm.Process",
+            "name": "Remote Access Gateway / VPN",
+            "id": "proc-remote-gw"
+          },
+          {
+            "type": "tm.Store",
+            "name": "Lokale Toegangsdatabase & Logs",
+            "id": "store-local-db"
+          },
+          {
+            "type": "tm.Store",
+            "name": "HR Dashboard Database",
+            "id": "store-hr-db"
+          },
+          {
+            "type": "tm.Boundary",
+            "name": "Fysieke Grens (Publiek vs Afgesloten Kast)",
+            "id": "boundary-physical"
+          },
+          {
+            "type": "tm.Boundary",
+            "name": "Perimeter / Externe Netwerkgrens",
+            "id": "boundary-external"
+          },
+          {
+            "type": "tm.Flow",
+            "name": "1. Badge ID (RFID/Wiegand)",
+            "source": { "id": "actor-user" },
+            "target": { "id": "proc-controller" }
+          },
+          {
+            "type": "tm.Flow",
+            "name": "2. HR Rechten Sync (TLS/HTTPS)",
+            "source": { "id": "store-hr-db" },
+            "target": { "id": "proc-hr-sync" }
+          },
+          {
+            "type": "tm.Flow",
+            "name": "3. Rechten Updates",
+            "source": { "id": "proc-hr-sync" },
+            "target": { "id": "store-local-db" }
+          },
+          {
+            "type": "tm.Flow",
+            "name": "4. Remote Onderhoud Sessie (MFA + Encrypted)",
+            "source": { "id": "actor-vendor" },
+            "target": { "id": "proc-remote-gw" }
+          },
+          {
+            "type": "tm.Flow",
+            "name": "5. Beheercommando's",
+            "source": { "id": "proc-remote-gw" },
+            "target": { "id": "proc-controller" }
+          }
+        ]
+      }
+    ]
+  }
+}
